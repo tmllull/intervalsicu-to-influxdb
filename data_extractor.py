@@ -44,7 +44,6 @@ class DataExtractor:
         """
         activities_list = self._intervals.activities(self._start_date, self._end_date)
         activities_ids = []
-        print("Total activities:", len(activities_list))
         for activity in activities_list:
             activities_ids.append(
                 {
@@ -197,8 +196,8 @@ class DataExtractor:
 
     def streams(self):
         streams = []
-        print("Saving streams...")
         activities = self._get_activities_for_streams()
+        print("Saving streams for " + str(len(activities)) + " avtivities...")
         for i, activity in enumerate(activities):
             try:
                 (
