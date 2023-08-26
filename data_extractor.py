@@ -97,9 +97,10 @@ class DataExtractor:
             + str(len(activities_list))
             + " activities..."
         )
+        data = []
         for i, activity in enumerate(activities_list):
             # print(activity["id"])
-            data = []
+            # data = []
             activity_data = {}
             activity_data["fields"] = []
             activity_data["tags"] = []
@@ -190,15 +191,22 @@ class DataExtractor:
                 ).timestamp()
             )
             data.append(activity_data)
-            self._influx.write_data(data)
-            if i > 1 and i % 10 == 0:
+            # self._influx.write_data(data)
+            if i > 1 and i % 50 == 0:
+                self._influx.write_data(data)
+                data = []
                 print(i, "of", len(activities_list), "saved")
+            elif i == len(activities_list) - 1:
+                self._influx.write_data(data)
+                print(i + 1, "of", len(activities_list), "saved")
 
     def streams(self):
         streams = []
         activities = self._get_activities_for_streams()
-        print("Saving streams for " + str(len(activities)) + " avtivities...")
+        print("Saving streams for " + str(len(activities)) + " activities...")
+        data = []
         for i, activity in enumerate(activities):
+            # data = []
             try:
                 (
                     time,
@@ -227,7 +235,7 @@ class DataExtractor:
                     respiration,
                 ]
                 for stream in streams:
-                    data = []
+                    # data = []
                     if stream != []:
                         for j, item in enumerate(stream["data"]):
                             stream_data = {}
@@ -253,8 +261,13 @@ class DataExtractor:
                             )
                             data.append(stream_data)
 
-                        self._influx.write_data(data)
-                if i > 1 and i % 10 == 0:
+                        # self._influx.write_data(data)
+                if i > 1 and i % 20 == 0:
+                    self._influx.write_data(data)
+                    data = []
                     print(i, "of", len(activities), "saved")
+                elif i == len(activities) - 1:
+                    self._influx.write_data(data)
+                    print(i + 1, "of", len(activities), "saved")
             except Exception as e:
                 print("Error on activity ", activity, ":", e)

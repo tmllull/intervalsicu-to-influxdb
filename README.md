@@ -11,6 +11,7 @@ Currently the follow data is exported:
 - **Activities**: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
 - ***Streams*** (wip): streams contains detailed information about activities, like hr/pace on every second. Currently working on this data, so can be some errors
 
+NOTE: in order to avoid influx timeout on saving data, activities are saved every 50, and streams every 20.
 
 ## How to use
 1. Create a `.env` file on the root folder with the following values:
