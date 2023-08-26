@@ -1,5 +1,10 @@
 .env
 
+
+
+## Execute script
+1. Create a `.env` file on the root folder with the following values:
+
 ```
 INFLUXDB_TOKEN=
 INFLUXDB_ORG=
@@ -9,9 +14,7 @@ INTERVALS_ATHLETE_ID=
 INTERVALS_API_KEY=
 ```
 
-## Execute script
-
-1. Run:
+2. Run:
 
 ```
 docker build --tag intervals-to-influxdb .
