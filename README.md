@@ -7,9 +7,9 @@ Script to export some data from [intervals.icu](https://intervals.icu) to [influ
 Not all information is exported. This project has been created to extract only data from activities or wellness (sleep, VO2Max, etc.). Information about data account (email, location, preferences, etc.), calendar or workouts are not retreived.
 
 Currently the follow data is exported:
-- **Welness**: this data contains information about sleep time and quality, act/ctl or VO2Max
+- **Wellness**: this data contains information about sleep time and quality, act/ctl or VO2Max
 - **Activities**: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
-- ***Streams*** (wip): streams contains detailed information about activities, like hr/pace on every second. Currently working on this data, so can be some errors
+- ***Streams*** (wip): streams contains detailed information about activities, like hr/pace for every second. Currently working on this type of data, so can be some errors
 
 NOTE: in order to avoid influx timeout on saving data, activities are saved every 50, and streams every 20.
 
