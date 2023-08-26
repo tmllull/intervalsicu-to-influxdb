@@ -18,6 +18,14 @@ class DataExtractor:
         self._end_date = end_date
 
     def _convert_pace(self, time):
+        """Convert pace from m/s to min/km
+
+        Args:
+            time (float): pace in m/s
+
+        Returns:
+            float: pace converted to min/km in float format. Example: 4:30 => 4.3, 4:55 => 4.55
+        """
         try:
             time = float((float(3600 / (float(time) * 3.6))) / 60)
             res = time - int(time)
@@ -30,6 +38,14 @@ class DataExtractor:
             return time
 
     def _convert_speed(self, time):
+        """Convert speed from m/s to km/h
+
+        Args:
+            time (float): speed in m/s
+
+        Returns:
+            float: speed converted to km/h
+        """
         try:
             return float(float(time) * 3.6)
         except Exception:
@@ -74,9 +90,7 @@ class DataExtractor:
             fields["ctlLoad"] = wellness["ctlLoad"]
             fields["atlLoad"] = wellness["atlLoad"]
             fields["restingHR"] = wellness["restingHR"]
-            fields["sleepTime"] = wellness[
-                "sleepSecs"
-            ]  # secs_to_hours(wellness["sleepSecs"])
+            fields["sleepTime"] = wellness["sleepSecs"]
             fields["sleepScore"] = wellness["sleepScore"]
             fields["sleepQuality"] = wellness["sleepQuality"]
             fields["vo2max"] = wellness["vo2max"]
@@ -99,8 +113,6 @@ class DataExtractor:
         )
         data = []
         for i, activity in enumerate(activities_list):
-            # print(activity["id"])
-            # data = []
             activity_data = {}
             activity_data["fields"] = []
             activity_data["tags"] = []
@@ -131,13 +143,8 @@ class DataExtractor:
                 activity["start_date_local"], "%Y-%m-%dT%H:%M:%S"
             ).strftime("%H:%M")
             fields["distance"] = activity["distance"]
-            # convert_to_km(activity["distance"])
-            fields["moving_time"] = activity[
-                "moving_time"
-            ]  # mins_to_hours(activity["moving_time"])
-            fields["elapsed_time"] = activity[
-                "elapsed_time"
-            ]  # mins_to_hours(activity["elapsed_time"])
+            fields["moving_time"] = activity["moving_time"]
+            fields["elapsed_time"] = activity["elapsed_time"]
             fields["total_elevation_gain"] = activity["total_elevation_gain"]
             fields["max_speed"] = self._convert_speed(activity["max_speed"])
             fields["average_speed"] = self._convert_speed(activity["average_speed"])
@@ -170,7 +177,6 @@ class DataExtractor:
                 "icu_hr_time": activity["icu_hr_zone_times"],
                 "pace_zone_time": activity["pace_zone_times"],
             }
-            # print(zones)
             for zone in zones:
                 try:
                     if zones[zone] is not None:
@@ -191,7 +197,6 @@ class DataExtractor:
                 ).timestamp()
             )
             data.append(activity_data)
-            # self._influx.write_data(data)
             if i > 1 and i % 50 == 0:
                 self._influx.write_data(data)
                 data = []
@@ -206,7 +211,6 @@ class DataExtractor:
         print("Saving streams for " + str(len(activities)) + " activities...")
         data = []
         for i, activity in enumerate(activities):
-            # data = []
             try:
                 (
                     time,
@@ -260,8 +264,6 @@ class DataExtractor:
                                 + j
                             )
                             data.append(stream_data)
-
-                        # self._influx.write_data(data)
                 if i > 1 and i % 20 == 0:
                     self._influx.write_data(data)
                     data = []
