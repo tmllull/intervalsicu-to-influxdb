@@ -239,7 +239,6 @@ class DataExtractor:
                     respiration,
                 ]
                 for stream in streams:
-                    # data = []
                     if stream != []:
                         for j, item in enumerate(stream["data"]):
                             stream_data = {}
