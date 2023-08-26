@@ -42,7 +42,7 @@ NOTE: if you set [start_date], all data from this date until today will be retre
 If you want to run with a cron job, use the following commad (recommended use without date, to get only the new data):
 
 ```
-docker run --env-file path/to/.env --rm intervals-to-influxdb app.py [start_date]
+docker run --rm intervals-to-influxdb app.py [start_date]
 ```
 
 1. If you want to run the script without Docker:
