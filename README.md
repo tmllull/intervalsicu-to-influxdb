@@ -1,8 +1,18 @@
-.env
+# Intervals.icu to influxDB
+Script to export some data from [intervals.icu](https://intervals.icu) to [influxDB](https://www.influxdata.com/), so you can create your own dashboards, for example with [Grafana](https://grafana.com/).
+
+![Grafana Dashboard example](assets/image.png)
+
+## Exported data
+Not all information is exported. This project has been created to extract only data from activities or wellness (sleep, VO2Max, etc.). Information about data account (email, location, preferences, etc.), calendar or workouts are not retreived.
+
+Currently the follow data is exported:
+- **Welness**: this data contains information about sleep time and quality, act/ctl or VO2Max
+- **Activities**: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
+- ***Streams*** (wip): streams contains detailed information about activities, like hr/pace on every second. Currently working on this data, so can be some errors
 
 
-
-## Execute script
+## How to use
 1. Create a `.env` file on the root folder with the following values:
 
 ```
