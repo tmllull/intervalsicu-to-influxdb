@@ -9,7 +9,7 @@ INTERVALS_ATHLETE_ID=
 INTERVALS_API_KEY=
 ```
 
-## Send messages script
+## Execute script
 
 1. Run:
 
