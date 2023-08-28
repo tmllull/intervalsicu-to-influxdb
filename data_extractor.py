@@ -94,6 +94,7 @@ class DataExtractor:
             fields["sleepScore"] = wellness["sleepScore"]
             fields["sleepQuality"] = wellness["sleepQuality"]
             fields["vo2max"] = wellness["vo2max"]
+            fields["weight"] = wellness["weight"]
             day_data["fields"] = fields
             day_data["tags"] = tags
             day_data["time"] = int(
