@@ -10,8 +10,13 @@ Not all information is exported. This project has been created to extract only d
 
 Currently the following data is exported:
 - **Wellness**: this data contains information like sleep time and quality, act/ctl or VO2Max
-- **Activities**: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
-- ***Streams*** (wip): streams contains detailed information about activities, like hr/pace for every second. Currently working on this, so can be some errors
+- \***Activities**: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
+- \*\****Streams***: streams contains detailed information about activities, like hr/pace for every second.
+
+\* Common data is stored (time, distance, hr...). Specific data for every activity type (like pool distance for Swim, for example) is not stored. (Next steps)
+
+\*\* Like activities, for now I'm working on Run streams. Another activity types streams are not exported (next steps)
+
 
 
 ## How to use
