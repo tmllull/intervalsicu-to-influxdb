@@ -1,11 +1,11 @@
 import datetime
 
-from my_utils import MyUtils
+from ..my_utils import MyUtils
 
 utils = MyUtils()
 
 
-class Ride(dict):
+class Activity(dict):
     fields = [
         "id",
         "start_date_local",
@@ -151,12 +151,11 @@ class Ride(dict):
     iterable_fields = [
         "gear",
         "interval_summary",
-        "stream_types",
         "power_field_names",
         "icu_hrr",
+        "stream_types",
         "recording_stops",
         "icu_achievements",
-        "icu_hrr",
     ]
 
     iterable_zones = [
@@ -167,6 +166,7 @@ class Ride(dict):
         "icu_hr_zone_times",
         "pace_zone_times",
         "gap_zone_times",
+        "icu_hrr",
     ]
 
     def __init__(self, **kwargs):
@@ -174,11 +174,12 @@ class Ride(dict):
 
     def extract_data(self, data):
         fields = {}
-        activity = Ride(**data)
+        activity = Activity(**data)
         for key, value in activity.items():
             if key not in self.iterable_fields and key not in self.iterable_zones:
                 if key == "pace":
-                    fields[key] = utils.convert_pace(value)
+                    fields[key] = value
+                    fields["converted_pace"] = utils.convert_pace(value)
                 elif key in ["gear", "group"]:
                     fields[key] = str(value)
                 elif key == "start_date_local":
@@ -186,19 +187,56 @@ class Ride(dict):
                         value, "%Y-%m-%dT%H:%M:%S"
                     ).strftime("%Y-%m-%d")
                 elif key in ["max_speed", "average_speed"]:
-                    fields[key] = utils.convert_speed(value)
+                    fields[key] = value
+                    fields["converted_speed"] = utils.convert_speed(value)
                 else:
                     fields[key] = value
+        for key, value in self.extract_zones(activity).items():
+            fields[key] = value
+        return fields
+
+    def extract_zones(self, activity):
+        zones = {}
         for zone in self.iterable_zones:
             try:
                 if activity[zone] is not None:
                     if zone != "icu_zone_times":
                         for j, value_zone in enumerate(activity[zone]):
-                            fields[zone + "_" + str(j)] = value_zone
+                            zones[zone + "_" + str(j)] = value_zone
                     else:
                         for value_zone in activity[zone]:
-                            fields[zone + "_" + value_zone["id"]] = value_zone["secs"]
+                            zones[zone + "_" + value_zone["id"]] = value_zone["secs"]
             except Exception as e:
                 print(e)
                 continue
-        return fields
+        return zones
+
+    def get_streams(self, data):
+        streams = []
+        for stream in data["stream_types"]:
+            streams.append(stream)
+        return streams
+
+    def get_intervals_summary(self, data):
+        intervals_summary = []
+        for interval_summary in data["interval_summary"]:
+            intervals_summary.append(interval_summary)
+        return intervals_summary
+
+    def get_icu_hrr(self, data):
+        hrr = {}
+        hrr["start_index"] = data["start_index"]
+        hrr["end_index"] = data["end_index"]
+        hrr["start_time"] = data["start_time"]
+        hrr["end_time"] = data["end_time"]
+        hrr["start_bpm"] = data["start_bpm"]
+        hrr["end_bpm"] = data["end_bpm"]
+        hrr["average_watts"] = data["average_watts"]
+        hrr["hrr"] = data["hrr"]
+        return hrr
+
+    def get_recording_stops(self, data):
+        stops = []
+        for stop in data["recording_stops"]:
+            stops.add(stop)
+        return stops

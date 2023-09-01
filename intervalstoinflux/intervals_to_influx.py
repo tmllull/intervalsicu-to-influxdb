@@ -1,26 +1,53 @@
 import datetime
+import os
 
-from influx_client import InfluxClient
-from intervals import Intervals
-from objects.ride import Ride
-from objects.run import Run
-from objects.swim import Swim
-from objects.wellness import Wellness
-from objects.yoga import Yoga
+from dotenv import dotenv_values
+
+from .entities.activity import Activity
+from .entities.wellness import Wellness
+from .influx_client import InfluxClient
+from .intervals_client import Intervals
+
+try:
+    # Load env variables
+    config = dotenv_values(".env")
+    INFLUXDB_TOKEN = config.get("INFLUXDB_TOKEN", os.environ.get("INFLUXDB_TOKEN"))
+    INFLUXDB_ORG = config.get("INFLUXDB_ORG", os.environ.get("INFLUXDB_ORG"))
+    INFLUXDB_URL = config.get("INFLUXDB_URL", os.environ.get("INFLUXDB_URL"))
+    INFLUXDB_BUCKET = config.get("INFLUXDB_BUCKET", os.environ.get("INFLUXDB_BUCKET"))
+    INFLUXDB_TIMEOUT = config.get(
+        "INFLUXDB_TIMEOUT", os.environ.get("INFLUXDB_TIMEOUT")
+    )
+    INTERVALS_ATHLETE_ID = config.get(
+        "INTERVALS_ATHLETE_ID", os.environ.get("INTERVALS_ATHLETE_ID")
+    )
+    INTERVALS_API_KEY = config.get(
+        "INTERVALS_API_KEY", os.environ.get("INTERVALS_API_KEY")
+    )
+
+except Exception as e:
+    exit(e)
 
 
-class DataExtractor:
-    def __init__(
-        self,
-        intervals_client: Intervals,
-        influx_client: InfluxClient,
-        start_date,
-        end_date,
-    ):
-        self._intervals = intervals_client
-        self._influx = influx_client
-        self._start_date = start_date
-        self._end_date = end_date
+class IntervalsToInflux:
+    def __init__(self, start_date=None, end_date=None, reset=None):
+        self._intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
+        self._influx = InfluxClient(
+            INFLUXDB_URL,
+            INFLUXDB_TOKEN,
+            INFLUXDB_ORG,
+            INFLUXDB_BUCKET,
+            INFLUXDB_TIMEOUT,
+            reset,
+        )
+        if start_date is not None:
+            self._start_date = datetime.date.fromisoformat(start_date)
+        else:
+            self._start_date = datetime.datetime.now().date()
+        if end_date:
+            self._end_date = datetime.date.fromisoformat(end_date)
+        else:
+            self._end_date = datetime.datetime.now().date()
 
     def _get_activities_for_streams(self):
         """Get minumun information about activities like id, type and start_date.
@@ -92,16 +119,7 @@ class DataExtractor:
                 item["start_date_local"], "%Y-%m-%dT%H:%M:%S"
             ).strftime("%Y-%m-%d")
             fields = {}
-            if item["type"] == "Run":
-                fields = Run().extract_data(item)
-            elif item["type"] == "Ride":
-                fields = Ride().extract_data(item)
-            elif item["type"] == "Swim":
-                fields = Swim().extract_data(item)
-            elif item["type"] == "Yoga":
-                fields = Yoga().extract_data(item)
-            else:
-                continue
+            fields = Activity().extract_data(item)
             activity_data["fields"] = fields
             activity_data["tags"] = tags
             activity_data["time"] = int(
