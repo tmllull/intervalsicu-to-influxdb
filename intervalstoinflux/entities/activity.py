@@ -183,6 +183,7 @@ class Activity(dict):
                 elif key in ["gear", "group"]:
                     fields[key] = str(value)
                 elif key == "start_date_local":
+                    fields[key] = value
                     fields["activity_date"] = datetime.datetime.strptime(
                         value, "%Y-%m-%dT%H:%M:%S"
                     ).strftime("%Y-%m-%d")
