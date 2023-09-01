@@ -1,65 +1,45 @@
-import datetime
-import os
-import sys
+import argparse
 
-from data_extractor import DataExtractor
-from dotenv import dotenv_values
-from influx_client import InfluxClient
-from intervals import Intervals
+from intervalstoinflux.intervals_to_influx import IntervalsToInflux
 
-try:
-    # Load .env
-    config = dotenv_values(".env")
-    INFLUXDB_TOKEN = config["INFLUXDB_TOKEN"]
-    INFLUXDB_ORG = config["INFLUXDB_ORG"]
-    INFLUXDB_URL = config["INFLUXDB_URL"]
-    INFLUXDB_BUCKET = config["INFLUXDB_BUCKET"]
-    INTERVALS_ATHLETE_ID = config["INTERVALS_ATHLETE_ID"]
-    INTERVALS_API_KEY = config["INTERVALS_API_KEY"]
+# Arg parser
+parser = argparse.ArgumentParser()
 
-
-except Exception as e:
-    print("Error loading .env:", e)
-    INFLUXDB_TOKEN = os.environ["INFLUXDB_TOKEN"]
-    INFLUXDB_ORG = os.environ["INFLUXDB_ORG"]
-    INFLUXDB_URL = os.environ["INFLUXDB_URL"]
-    INFLUXDB_BUCKET = os.environ["INFLUXDB_BUCKET"]
-    INTERVALS_ATHLETE_ID = os.environ["INTERVALS_ATHLETE_ID"]
-    INTERVALS_API_KEY = os.environ["INTERVALS_API_KEY"]
-
-start_date = ""
-reset = False
-
-if len(sys.argv) == 2:
-    try:
-        start_date = datetime.date.fromisoformat(sys.argv[1])
-    except Exception as e:
-        exit(e)
-if len(sys.argv) == 3:
-    try:
-        start_date = datetime.date.fromisoformat(sys.argv[1])
-        reset = True
-    except Exception as e:
-        exit(e)
-if len(sys.argv) > 3:
-    exit("Too many params. Only 0 or 1 are allowed")
-
-if start_date == "":
-    start_date = datetime.datetime.now().date()
-end_date = datetime.datetime.now().date()
-
-intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
-influx = InfluxClient(
-    INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, reset
+parser.add_argument(
+    "--streams",
+    action="store_true",
+    help="Export streams for the activities",
 )
-extractor = DataExtractor(intervals, influx, start_date, end_date)
+parser.add_argument(
+    "--reset", action="store_true", help="Reset influx bucket (delete and create)"
+)
+parser.add_argument("--start-date", type=str, help="Start date in format YYYY-MM-DD")
+parser.add_argument("--end-date", type=str, help="End date in format YYYY-MM-DD")
 
-#### ATHLETE
-# ride, run, swim, other = intervals.athlete(INTERVALS_ATHLETE_ID)
-# print(ride)
-# exit()
+args = parser.parse_args()
 
-#### WELLNESS
+if args.streams:
+    streams = True
+else:
+    streams = False
+if args.reset:
+    reset = True
+else:
+    reset = False
+if args.start_date:
+    start_date = args.start_date
+else:
+    start_date = None
+if args.end_date:
+    end_date = args.end_date
+else:
+    end_date = None
+
+
+extractor = IntervalsToInflux(start_date, end_date, reset)
+
+# Main process
 extractor.wellness()
 extractor.activities()
-extractor.streams()
+if streams:
+    extractor.streams()

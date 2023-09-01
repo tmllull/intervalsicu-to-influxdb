@@ -3,10 +3,10 @@ from influxdb_client.client.write_api import ASYNCHRONOUS, SYNCHRONOUS
 
 
 class InfluxClient:
-    def __init__(self, url, token, org, bucket, reset):
+    def __init__(self, url, token, org, bucket, timeout=10000, reset=False):
         self._org = org
         self._bucket = bucket
-        self._client = InfluxDBClient(url=url, token=token)
+        self._client = InfluxDBClient(url=url, token=token, timeout=timeout)
         self._buckets = BucketsApi(self._client)
         bucket = self.get_bucket_by_name(self._bucket)
         if bucket is None:

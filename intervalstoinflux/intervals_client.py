@@ -29,7 +29,7 @@ class Intervals:
         res = session.request(method, url, params=params)
 
         if res.status_code != 200:
-            raise Exception("Error on request")
+            raise Exception("Error on request:" + str(res))
 
         return res
 
