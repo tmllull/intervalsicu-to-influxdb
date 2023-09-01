@@ -1,16 +1,14 @@
 import argparse
-import datetime
 
-from dotenv import dotenv_values
 from intervalstoinflux.intervals_to_influx import IntervalsToInflux
 
 # Arg parser
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    "--no-streams",
+    "--streams",
     action="store_true",
-    help="This flag ignores streams when export data",
+    help="Export streams for the activities",
 )
 parser.add_argument(
     "--reset", action="store_true", help="Reset influx bucket (delete and create)"
@@ -20,10 +18,10 @@ parser.add_argument("--end-date", type=str, help="End date in format YYYY-MM-DD"
 
 args = parser.parse_args()
 
-if args.no_streams:
-    no_streams = True
+if args.streams:
+    streams = True
 else:
-    no_streams = False
+    streams = False
 if args.reset:
     reset = True
 else:
@@ -43,5 +41,5 @@ extractor = IntervalsToInflux(start_date, end_date, reset)
 # Main process
 extractor.wellness()
 extractor.activities()
-if not no_streams:
+if streams:
     extractor.streams()
