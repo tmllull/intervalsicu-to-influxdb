@@ -54,27 +54,6 @@ influx = InfluxClient(
 )
 extractor = DataExtractor(intervals, influx, start_date, end_date)
 
-
-# def convert_pace(time):
-#     try:
-#         time = float((float(3600 / (float(time) * 3.6))) / 60)
-#         res = time - int(time)
-#         res = round(res * 0.6, 2)
-#         if res == 0.6:
-#             time = int(time) + 1
-#             res = 0
-#         return float(int(time) + res)
-#     except:
-#         return time
-
-
-# def convert_speed(time):
-#     try:
-#         return float(float(time) * 3.6)
-#     except:
-#         return time
-
-
 #### ATHLETE
 # ride, run, swim, other = intervals.athlete(INTERVALS_ATHLETE_ID)
 # print(ride)
