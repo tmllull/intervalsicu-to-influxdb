@@ -189,7 +189,7 @@ class IntervalsToInflux:
                             stream_data["tags"] = tags
                             stream_data["time"] = int(
                                 datetime.datetime.strptime(
-                                    activity["time"], "%Y-%m-%dT%H:%M:%S"
+                                    activity["start_date_local"], "%Y-%m-%dT%H:%M:%S"
                                 ).timestamp()
                                 + j
                             )
