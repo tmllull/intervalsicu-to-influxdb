@@ -36,6 +36,8 @@ INTERVALS_ATHLETE_ID=
 INTERVALS_API_KEY=
 ```
 
+NOTE: If no bucket exists when run the script, a new one will be created.
+
 ### Docker
 
 1. Compile the image:
@@ -47,22 +49,25 @@ docker build --tag intervals-to-influxdb .
 2. Run a new container with the created image:
 
 ```
-docker run -it --rm intervals-to-influxdb app.py [start_date] [reset]
+docker run -it --rm intervals-to-influxdb app.py app.py [-h] [--no-streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
 ```
 
 Examples:
 ```
 # First run
-docker run -it --rm intervals-to-influxdb app.py 2023-01-01
+docker run -it --rm intervals-to-influxdb app.py --start-date 2023-01-01
 
 # Update data from specific date (august)
-docker run -it --rm intervals-to-influxdb app.py 2023-08-01
+docker run -it --rm intervals-to-influxdb app.py --start-date 2023-08-01
 
 # Retreive data for today
 docker run -it --rm intervals-to-influxdb app.py
 
+# Retreive data without streams
+docker run -it --rm intervals-to-influxdb app.py --no-streams
+
 # Reset buket (start_date is required)
-docker run -it --rm intervals-to-influxdb app.py 2023-01-01 reset
+docker run -it --rm intervals-to-influxdb app.py --start-date 2023-01-01 --reset
 ```
 
 If you want to run with a cron job, use the following commad (recommended use without date, to get only the new data):
@@ -80,25 +85,23 @@ pip install -r requirements.txt
 
 2. Run the script
 ```
-python app.py [start_date] [reset]
+python app.py [-h] [--no-streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
 ```
 
 Examples:
 ```
 # First run
-python app.py 2023-01-01
+python app.py --start-date 2023-01-01
 
 # Update data from specific date (august)
-python app.py 2023-08-01
+python app.py --start-date 2023-01-01
 
 # Retreive data for today
 python app.py
 
+# Retreive data without streams
+python app.py --no-streams
+
 # Reset buket (start_date is required)
-python app.py 2023-01-01 reset
+python app.py --start-date 2023-01-01 --reset
 ```
-
-### Params
-If you set [start_date], all data from this date until today will be retreived. If not, only data for today. If you set [reset], the bucket on influxDB will be removed before start the process (this param must be on the second place, so if you want to get only the current day data and reset de bucket, you must to pass today date).
-
-If no bucket exists when run the script, a new one will be created.
