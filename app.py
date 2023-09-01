@@ -8,30 +8,26 @@ from influx_client import InfluxClient
 from intervals import Intervals
 
 try:
-    # Load .env
+    # Load env variables
     config = dotenv_values(".env")
-    INFLUXDB_TOKEN = config["INFLUXDB_TOKEN"]
-    INFLUXDB_ORG = config["INFLUXDB_ORG"]
-    INFLUXDB_URL = config["INFLUXDB_URL"]
-    INFLUXDB_BUCKET = config["INFLUXDB_BUCKET"]
-    INFLUXDB_TIMEOUT = config["INFLUXDB_TIMEOUT"]
-    INTERVALS_ATHLETE_ID = config["INTERVALS_ATHLETE_ID"]
-    INTERVALS_API_KEY = config["INTERVALS_API_KEY"]
+    INFLUXDB_TOKEN = config.get("INFLUXDB_TOKEN", os.environ.get("INFLUXDB_TOKEN"))
+    INFLUXDB_ORG = config.get("INFLUXDB_ORG", os.environ.get("INFLUXDB_ORG"))
+    INFLUXDB_URL = config.get("INFLUXDB_URL", os.environ.get("INFLUXDB_URL"))
+    INFLUXDB_BUCKET = config.get("INFLUXDB_BUCKET", os.environ.get("INFLUXDB_BUCKET"))
+    INFLUXDB_TIMEOUT = config.get(
+        "INFLUXDB_TIMEOUT", os.environ.get("INFLUXDB_TIMEOUT")
+    )
+    INTERVALS_ATHLETE_ID = config.get(
+        "INTERVALS_ATHLETE_ID", os.environ.get("INTERVALS_ATHLETE_ID")
+    )
+    INTERVALS_API_KEY = config.get(
+        "INTERVALS_API_KEY", os.environ.get("INTERVALS_API_KEY")
+    )
 
 except Exception as e:
-    print("Error loading .env:", e)
-    INFLUXDB_TOKEN = os.environ["INFLUXDB_TOKEN"]
-    INFLUXDB_ORG = os.environ["INFLUXDB_ORG"]
-    INFLUXDB_URL = os.environ["INFLUXDB_URL"]
-    INFLUXDB_BUCKET = os.environ["INFLUXDB_BUCKET"]
-    INFLUXDB_TIMEOUT = os.environ["INFLUXDB_TIMEOUT"]
-    INTERVALS_ATHLETE_ID = os.environ["INTERVALS_ATHLETE_ID"]
-    INTERVALS_API_KEY = os.environ["INTERVALS_API_KEY"]
+    exit(e)
 
-# Default values
-reset = False
-no_streams = False
-
+# Arg parser
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
@@ -64,13 +60,14 @@ if args.end_date:
 else:
     end_date = datetime.datetime.now().date()
 
-
+# Init instances
 intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
 influx = InfluxClient(
     INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, reset
 )
 extractor = DataExtractor(intervals, influx, start_date, end_date)
 
+# Main process
 extractor.wellness()
 extractor.activities()
 if not no_streams:
