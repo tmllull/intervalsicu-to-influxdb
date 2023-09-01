@@ -174,12 +174,9 @@ class Swim(dict):
                 elif key in ["gear", "group"]:
                     fields[key] = str(value)
                 elif key == "start_date_local":
-                    fields["start_date"] = datetime.datetime.strptime(
+                    fields["activity_date"] = datetime.datetime.strptime(
                         value, "%Y-%m-%dT%H:%M:%S"
                     ).strftime("%Y-%m-%d")
-                    fields["start_time"] = datetime.datetime.strptime(
-                        value, "%Y-%m-%dT%H:%M:%S"
-                    ).strftime("%H:%M")
                 elif key in ["max_speed", "average_speed"]:
                     fields[key] = utils.convert_speed(value)
                 else:
