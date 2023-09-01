@@ -155,6 +155,8 @@ class Ride(dict):
         "power_field_names",
         "icu_hrr",
         "recording_stops",
+        "icu_achievements",
+        "icu_hrr",
     ]
 
     iterable_zones = [

@@ -152,6 +152,8 @@ class Swim(dict):
         "interval_summary",
         "stream_types",
         "recording_stops",
+        "icu_achievements",
+        "icu_hrr",
     ]
 
     iterable_zones = [

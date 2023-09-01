@@ -96,7 +96,7 @@ class DataExtractor:
             elif item["type"] == "Yoga":
                 fields = Yoga().extract_data(item)
             else:
-                print("Unsuported activity")
+                continue
             activity_data["fields"] = fields
             activity_data["tags"] = tags
             activity_data["time"] = int(

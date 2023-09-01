@@ -154,6 +154,8 @@ class Run(dict):
         "stream_types",
         "power_field_names",
         "recording_stops",
+        "icu_achievements",
+        "icu_hrr",
     ]
 
     iterable_zones = [

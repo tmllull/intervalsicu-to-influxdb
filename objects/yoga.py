@@ -148,15 +148,9 @@ class Yoga(dict):
         "session_rpe",
     ]
 
-    iterable_fields = [
-        "stream_types",
-        "recording_stops",
-    ]
+    iterable_fields = ["stream_types", "recording_stops", "icu_achievements"]
 
-    iterable_zones = [
-        "icu_hr_zones",
-        "icu_hr_zone_times",
-    ]
+    iterable_zones = ["icu_hr_zones", "icu_hr_zone_times", "icu_hrr"]
 
     def __init__(self, **kwargs):
         dict.__init__(self, **kwargs)
