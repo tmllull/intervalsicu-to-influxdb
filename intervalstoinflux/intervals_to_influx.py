@@ -179,9 +179,9 @@ class IntervalsToInflux:
                             stream_data["measurement"] = "stream"
                             tags = {}
                             try:
-                                fields["value"] = float(item)
+                                fields["data"] = float(item)
                             except Exception as e:
-                                fields["value"] = None
+                                fields["data"] = None
                             tags["activity_type"] = activity["type"]
                             tags["activity_id"] = activity["id"]
                             tags["stream_type"] = stream["type"]
