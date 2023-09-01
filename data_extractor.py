@@ -57,6 +57,11 @@ class DataExtractor:
             for key, value in wellness.items():
                 if key != "sportInfo":
                     fields[key] = value
+                    if key == "ctl":
+                        ctl = value
+                    if key == "atl":
+                        atl = value
+            fields["form"] = ctl - atl
             day_data["fields"] = fields
             day_data["tags"] = tags
             day_data["time"] = int(
