@@ -5,7 +5,7 @@ from my_utils import MyUtils
 utils = MyUtils()
 
 
-class Yoga(dict):
+class Swim(dict):
     fields = [
         "id",
         "start_date_local",
@@ -143,12 +143,13 @@ class Yoga(dict):
         "icu_intensity",
         "icu_variability_index",
         "icu_efficiency_factor",
-        "average_stride",
         "icu_power_hr",
         "session_rpe",
+        "average_stride",
     ]
 
     iterable_fields = [
+        "interval_summary",
         "stream_types",
         "recording_stops",
     ]
@@ -163,7 +164,7 @@ class Yoga(dict):
 
     def extract_data(self, data):
         fields = {}
-        activity = Yoga(**data)
+        activity = Swim(**data)
         for key, value in activity.items():
             if key not in self.iterable_fields and key not in self.iterable_zones:
                 if key == "pace":
