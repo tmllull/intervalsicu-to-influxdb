@@ -49,7 +49,7 @@ docker build --tag intervals-to-influxdb .
 2. Run a new container with the created image:
 
 ```
-docker run -it --rm intervals-to-influxdb app.py app.py [-h] [--no-streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
+docker run -it --rm intervals-to-influxdb app.py app.py [-h] [--streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
 ```
 
 Examples:
@@ -63,8 +63,8 @@ docker run -it --rm intervals-to-influxdb app.py --start-date 2023-08-01
 # Retreive data for today
 docker run -it --rm intervals-to-influxdb app.py
 
-# Retreive data without streams
-docker run -it --rm intervals-to-influxdb app.py --no-streams
+# Retreive data with streams
+docker run -it --rm intervals-to-influxdb app.py --streams
 
 # Reset buket (start_date is required)
 docker run -it --rm intervals-to-influxdb app.py --start-date 2023-01-01 --reset
@@ -85,7 +85,7 @@ pip install -r requirements.txt
 
 2. Run the script
 ```
-python app.py [-h] [--no-streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
+python app.py [-h] [--streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
 ```
 
 Examples:
@@ -99,8 +99,8 @@ python app.py --start-date 2023-01-01
 # Retreive data for today
 python app.py
 
-# Retreive data without streams
-python app.py --no-streams
+# Retreive data with streams
+python app.py --streams
 
 # Reset buket (start_date is required)
 python app.py --start-date 2023-01-01 --reset
