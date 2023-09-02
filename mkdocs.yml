@@ -1,1 +1,3 @@
 site_name: Intervals.icu to InfluxDB
+theme:
+  name: material
