@@ -108,6 +108,7 @@ python app.py --start-date 2023-01-01 --reset
 
 ## Options
 The following options are available:
+
 ```
 -h, --help              show this help message and exit
 --start-date START_DATE Start date in format YYYY-MM-DD
