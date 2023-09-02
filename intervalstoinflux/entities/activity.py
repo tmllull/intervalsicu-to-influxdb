@@ -1,6 +1,7 @@
 import datetime
 
 from ..my_utils import MyUtils
+from .object_validation import ObjectValidation
 
 utils = MyUtils()
 
@@ -169,13 +170,20 @@ class Activity(dict):
         "icu_hrr",
     ]
 
-    def __init__(self, **kwargs):
+    def __init__(self, validate=False, **kwargs):
+        if validate:
+            try:
+                ObjectValidation().validation(set(Activity.fields), set(kwargs.keys()))
+            except Exception as e:
+                exit(e)
         dict.__init__(self, **kwargs)
 
     def extract_data(self, data):
         fields = {}
         activity = Activity(**data)
         for key, value in activity.items():
+            if key not in Activity().fields:
+                continue
             if key not in self.iterable_fields and key not in self.iterable_zones:
                 if key == "pace":
                     fields[key] = value

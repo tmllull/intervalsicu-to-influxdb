@@ -49,7 +49,7 @@ docker build --tag intervals-to-influxdb .
 2. Run a new container with the created image:
 
 ```
-docker run -it --rm intervals-to-influxdb app.py app.py [-h] [--no-streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
+docker run -it --rm intervals-to-influxdb app.py app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset] [--validate]
 ```
 
 Examples:
@@ -85,7 +85,7 @@ pip install -r requirements.txt
 
 2. Run the script
 ```
-python app.py [-h] [--no-streams] [--reset] [--start-date START_DATE] [--end-date END_DATE]
+python app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset] [--validate]
 ```
 
 Examples:
@@ -104,4 +104,15 @@ python app.py --no-streams
 
 # Reset buket (start_date is required)
 python app.py --start-date 2023-01-01 --reset
+```
+
+## Options
+The following options are available:
+```
+-h, --help              show this help message and exit
+--start-date START_DATE Start date in format YYYY-MM-DD
+--end-date END_DATE     End date in format YYYY-MM-DD
+--streams               Export streams for the activities
+--reset                 Reset influx bucket (delete and create)
+--validate              Validate if requested fields exists on Intervals retreived object
 ```

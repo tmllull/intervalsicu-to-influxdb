@@ -4,6 +4,7 @@ import os
 from dotenv import dotenv_values
 
 from .entities.activity import Activity
+from .entities.athlete import Athlete
 from .entities.wellness import Wellness
 from .influx_client import InfluxClient
 from .intervals_client import Intervals
@@ -30,7 +31,9 @@ except Exception as e:
 
 
 class IntervalsToInflux:
-    def __init__(self, start_date=None, end_date=None, reset=None):
+    def __init__(
+        self, start_date=None, end_date=None, reset=None, streams=False, validate=False
+    ):
         self._intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
         self._influx = InfluxClient(
             INFLUXDB_URL,
@@ -48,6 +51,8 @@ class IntervalsToInflux:
             self._end_date = datetime.date.fromisoformat(end_date)
         else:
             self._end_date = datetime.datetime.now().date()
+        self.validate = validate
+        self.interval_streams = streams
 
     def _get_activities_for_streams(self):
         """Get minumun information about activities like id, type and start_date.
@@ -73,7 +78,7 @@ class IntervalsToInflux:
         data = []
         print("Total wellness data for " + str(len(wellness_list)) + " days...")
         for item in wellness_list:
-            wellness = Wellness(**item)
+            wellness = Wellness(self.validate, **item)
             day_data = {}
             day_data["fields"] = []
             day_data["tags"] = []
@@ -81,14 +86,7 @@ class IntervalsToInflux:
             tags = {}
             tags["day"] = wellness["id"]
             day_data["measurement"] = "wellness"
-            for key, value in wellness.items():
-                if key != "sportInfo":
-                    fields[key] = value
-                    if key == "ctl":
-                        ctl = value
-                    if key == "atl":
-                        atl = value
-            fields["form"] = ctl - atl
+            fields = Wellness().extract_data(item)
             day_data["fields"] = fields
             day_data["tags"] = tags
             day_data["time"] = int(
@@ -136,7 +134,52 @@ class IntervalsToInflux:
                 self._influx.write_data(data)
                 print(i + 1, "of", len(activities_list), "saved")
 
+    def athlete(self):
+        athlete = self._intervals.athlete(INTERVALS_ATHLETE_ID)
+        for key in athlete:
+            if key in Athlete().fields:
+                print(key, ":", athlete[key])
+        print("done")
+        exit()
+        print(
+            "Saving activities and zones for "
+            + str(len(activities_list))
+            + " activities..."
+        )
+        data = []
+        for i, item in enumerate(activities_list):
+            activity_data = {}
+            activity_data["fields"] = []
+            activity_data["tags"] = []
+            activity_data["measurement"] = "activity"
+            tags = {}
+            tags["type"] = item["type"]
+            tags["id"] = item["id"]
+            tags["start_date"] = datetime.datetime.strptime(
+                item["start_date_local"], "%Y-%m-%dT%H:%M:%S"
+            ).strftime("%Y-%m-%d")
+            fields = {}
+            fields = Activity().extract_data(item)
+            activity_data["fields"] = fields
+            activity_data["tags"] = tags
+            activity_data["time"] = int(
+                datetime.datetime.strptime(
+                    fields["start_date_local"], "%Y-%m-%dT%H:%M:%S"
+                ).timestamp()
+            )
+            data.append(activity_data)
+            if i > 1 and i % 50 == 0:
+                self._influx.write_data(data)
+                data = []
+                print(i, "of", len(activities_list), "saved")
+            elif i == len(activities_list) - 1:
+                self._influx.write_data(data)
+                print(i + 1, "of", len(activities_list), "saved")
+
     def streams(self):
+        if not self.interval_streams:
+            print("Ignoring streams")
+            return
         streams = []
         activities = self._get_activities_for_streams()
         print("Saving streams for " + str(len(activities)) + " activities...")

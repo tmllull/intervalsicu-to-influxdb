@@ -2,6 +2,8 @@ import datetime
 
 import requests
 
+from .entities.athlete import Athlete
+
 
 class Intervals:
     """ """
@@ -81,17 +83,12 @@ class Intervals:
         res = self._make_request("get", url)
         return res.text
 
-    def activity(self, activity_id):
-        """ """
-        url = "{}/api/v1/activity/{}".format(Intervals.BASE_URL, activity_id)
-        res = self._make_request("get", url)
-        return res.json()
-        # return Activity(**res.json())
-
     def athlete(self, athlete_id):
         """ """
         url = "{}/api/v1/athlete/{}".format(Intervals.BASE_URL, athlete_id)
         res = self._make_request("get", url)
+        return Athlete(**res.json())
+        return res.json()
         fields = res.json()
         ride = run = swim = other = {}
         for sport in fields["sportSettings"]:

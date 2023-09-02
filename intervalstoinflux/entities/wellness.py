@@ -1,3 +1,6 @@
+from .object_validation import ObjectValidation
+
+
 class Wellness(dict):
     fields = [
         "id",
@@ -40,8 +43,32 @@ class Wellness(dict):
         "comments",
     ]
 
-    def __init__(self, **kwargs):
+    iterable_fields = [
+        "sportInfo",
+    ]
+
+    def __init__(self, validate=False, **kwargs):
+        if validate:
+            try:
+                ObjectValidation().validation(set(Wellness.fields), set(kwargs.keys()))
+            except Exception as e:
+                exit(e)
         dict.__init__(self, **kwargs)
+
+    def extract_data(self, data):
+        fields = {}
+        wellness = Wellness(**data)
+        for key, value in wellness.items():
+            if key not in Wellness().fields:
+                continue
+            if key not in self.iterable_fields:
+                fields[key] = value
+                if key == "ctl":
+                    ctl = value
+                if key == "atl":
+                    atl = value
+        fields["form"] = ctl - atl
+        return fields
 
     def sport_info(self, wellness):
         # TODO: to be implemented
