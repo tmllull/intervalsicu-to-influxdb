@@ -30,7 +30,7 @@ except Exception as e:
 
 
 class IntervalsToInflux:
-    def __init__(self, start_date=None, end_date=None, reset=None):
+    def __init__(self, start_date=None, end_date=None, reset=None, streams=False):
         self._intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
         self._influx = InfluxClient(
             INFLUXDB_URL,
@@ -48,6 +48,7 @@ class IntervalsToInflux:
             self._end_date = datetime.date.fromisoformat(end_date)
         else:
             self._end_date = datetime.datetime.now().date()
+        self.interval_streams = streams
 
     def _get_activities_for_streams(self):
         """Get minumun information about activities like id, type and start_date.
@@ -68,6 +69,12 @@ class IntervalsToInflux:
             )
         return activities_ids
 
+    def all_data(self):
+        self.wellness()
+        self.activities()
+        if self.interval_streams:
+            self.streams()
+
     def wellness(self):
         wellness_list = self._intervals.wellness(self._start_date, self._end_date)
         data = []
@@ -81,14 +88,7 @@ class IntervalsToInflux:
             tags = {}
             tags["day"] = wellness["id"]
             day_data["measurement"] = "wellness"
-            for key, value in wellness.items():
-                if key != "sportInfo":
-                    fields[key] = value
-                    if key == "ctl":
-                        ctl = value
-                    if key == "atl":
-                        atl = value
-            fields["form"] = ctl - atl
+            fields = Wellness().extract_data(item)
             day_data["fields"] = fields
             day_data["tags"] = tags
             day_data["time"] = int(
