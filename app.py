@@ -1,6 +1,6 @@
 import argparse
 
-from intervalstoinflux.intervals_to_influx import IntervalsToInflux
+from intervalsicu_to_influxdb.extractor import IntervalsToInflux
 
 # Arg parser
 parser = argparse.ArgumentParser()
