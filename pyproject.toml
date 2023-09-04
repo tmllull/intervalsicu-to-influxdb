@@ -10,7 +10,7 @@ description = "A package to extract data from intervals.icu to influxDB"
 readme = "README.md"
 requires-python = ">=3.6"
 classifiers = [
-    "License :: OSI Approved :: GPL33",
+    "License :: OSI Approved :: GPL3",
     "Programming Language :: Python :: 3",
 ]
 
