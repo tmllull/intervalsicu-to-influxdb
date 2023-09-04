@@ -9,8 +9,7 @@ base_path = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(base_path, "README.md")) as f:
     README = f.read()
 
-with open("requirements.txt") as f:
-    REQUIREMENTS = f.read().splitlines()
+REQUIREMENTS = ["influxdb-client", "python-dotenv", "requests"]
 
 setuptools.setup(
     name="intervalsicu_to_influxdb",
@@ -27,7 +26,7 @@ setuptools.setup(
     keywords=["intervalsicu", "influxdb", "sport"],
     install_requires=REQUIREMENTS,
     classifiers=[
-        "License :: OSI Approved :: GPL3 License",
+        "License :: OSI Approved :: GPL3",
         "Programming Language :: Python :: 3",
     ],
 )
