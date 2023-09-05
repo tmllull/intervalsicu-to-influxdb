@@ -17,11 +17,7 @@ Currently the following data is exported:
 
 
 ## How to use
-This script can be used with Docker or directly from code (with Python).
-
-1. Download or clone this repository
-
-2. Create a `.env` file on the root folder with the following values:
+This script can be used with Docker or directly from code (with Python), but in both cases you need to create a .env file with the following information:
 
 ```
 INFLUXDB_TOKEN=
@@ -36,52 +32,75 @@ INTERVALS_API_KEY=
 NOTE: If no bucket exists when run the script, a new one will be created.
 
 ### Docker
+There are 2 ways to use it.
 
+### From Dockerhub
+If you want to use the last image from Dockerhub, just run
+
+```bash
+docker run --env-file PATH/TO/FILE -it --rm tmllull/intervals-to-influxdb app.py
+```
+
+### From source
+If you want to run with Docker using the sorce code, you need to follow the next steps:
 1. Compile the image:
 
-```
+```bash
 docker build --tag intervals-to-influxdb .
 ```
 
 2. Run a new container with the created image:
 
-```
-docker run -it --rm intervals-to-influxdb app.py app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
+```bash
+docker run --env-file PATH/TO/FILE -it --rm intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
 
-Examples:
+### Examples
 ```
 # First run
-docker run -it --rm intervals-to-influxdb app.py --start-date 2023-01-01
+docker run -it --rm tmllull/intervals-to-influxdb app.py --start-date 2023-01-01
 
-# Update data from specific date (august)
-docker run -it --rm intervals-to-influxdb app.py --start-date 2023-08-01
+# Get data from specific date (august)
+docker run -it --rm tmllull/intervals-to-influxdb app.py --start-date 2023-08-01
 
 # Retreive data for today
-docker run -it --rm intervals-to-influxdb app.py
+docker run -it --rm tmllull/intervals-to-influxdb app.py
 
-# Retreive data with streams
-docker run -it --rm intervals-to-influxdb app.py --streams
+# Retreive data for today with streams
+docker run -it --rm tmllull/intervals-to-influxdb app.py --streams
 
-# Reset buket (start_date is required)
-docker run -it --rm intervals-to-influxdb app.py --start-date 2023-01-01 --reset
+# Reset buket
+docker run -it --rm tmllull/intervals-to-influxdb app.py --start-date 2023-01-01 --reset
 ```
 
-If you want to run with a cron job, use the following commad (recommended use without date, to get only the new data):
+If you want to run with a cron job, use the following commad (recommended use without date, to get only the today's data):
 
 ```
-docker run --rm intervals-to-influxdb app.py
+docker run --env-file PATH/TO/FILE --rm tmllull/intervals-to-influxdb app.py
 ```
 
 ### Directly with Python
-1. Install dependencies:
+If you want to run it with python, there are 2 options:
+
+### Using pip
+To use the pip package, just install the module:
+
+```bash
+pip install intervalsicu-to-influxdb
+```
+
+Then, just use the `app.py` file.
+
+### Using source code
+If you want to run directly from source code, first clone the project, and then:
+
+1. Install dependencies
 
 ```
-pip install -r requirements.txt
 pip install .
 ```
 
-2. Run the script
+2. Run the script `app.py`
 ```
 python app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
@@ -100,7 +119,7 @@ python app.py
 # Retreive data with streams
 python app.py --streams
 
-# Reset buket (start_date is required)
+# Reset buket
 python app.py --start-date 2023-01-01 --reset
 ```
 
