@@ -26,7 +26,7 @@ setuptools.setup(
     keywords=["intervalsicu", "influxdb", "sport"],
     install_requires=REQUIREMENTS,
     classifiers=[
-        "License :: OSI Approved :: GPL3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3",
     ],
 )
