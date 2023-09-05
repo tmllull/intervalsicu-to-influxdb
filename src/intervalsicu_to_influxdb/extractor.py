@@ -4,9 +4,9 @@ import os
 from dotenv import dotenv_values
 
 from .entities.activity import Activity
+from .clients.influx_client import InfluxClient
+from .clients.intervals_client import Intervals
 from .entities.wellness import Wellness
-from .influx_client import InfluxClient
-from .intervals_client import Intervals
 
 try:
     # Load env variables
@@ -29,7 +29,7 @@ except Exception as e:
     exit(e)
 
 
-class IntervalsToInflux:
+class IntervalsToInflux(object):
     def __init__(self, start_date=None, end_date=None, reset=None, streams=False):
         self._intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
         self._influx = InfluxClient(

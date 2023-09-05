@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intervalsicu_to_influxdb"
+version = "0.1"
+authors = [{ name = "Toni Miquel Llull", email = "tonimiquel.llull@gmail.com" }]
+description = "A package to extract data from intervals.icu to influxDB"
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+"Homepage" = "https://codeberg.org/tmllull/intervalsicu-to-influxdb"
+"Bug Tracker" = "https://codeberg.org/tmllull/intervalsicu-to-influxdb/issues"

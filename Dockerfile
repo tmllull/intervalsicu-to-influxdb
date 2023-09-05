@@ -2,11 +2,9 @@ FROM python:3.8-slim-buster
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
-ENV TZ="Europe/Madrid"
-
 COPY . .
+RUN pip3 install .
+ENV TZ="Europe/Madrid"
 
 CMD ["app.py"]
 ENTRYPOINT ["python3"]
