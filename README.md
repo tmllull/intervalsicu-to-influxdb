@@ -6,7 +6,7 @@ The following screenshots are an example with Grafana:
 ![Grafana Dashboard example](docs/screenshots/image.png)
 ![Grafana Dashboard example2](docs/screenshots/image2.png)
 ## Exported data
-Not all information is exported. This project has been created to extract (for now) only data from activities or wellness (sleep, VO2Max, etc.). Besides, information about data account (like email, location, preferences, etc.), calendar or workouts are not retreived neither.
+Not all information is exported. This project has been created to extract (for now) only data from activities or wellness (sleep, VO2Max, etc.). Besides, information about data account (like email, location, preferences, etc.), calendar or workouts are not retreived neither (for now).
 
 Currently the following data is exported:
 - **Wellness**: this data contains information like sleep time and quality, act/ctl or VO2Max
@@ -78,6 +78,7 @@ docker run --rm intervals-to-influxdb app.py
 
 ```
 pip install -r requirements.txt
+pip install .
 ```
 
 2. Run the script
