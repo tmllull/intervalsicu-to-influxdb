@@ -60,6 +60,7 @@ class Wellness(dict):
                 if key == "atl":
                     atl = value
         fields["form"] = ctl - atl
+        fields["form_percent"] = (ctl - atl) / ctl
         return fields
 
     def sport_info(self, wellness):

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "intervalsicu_to_influxdb"
-version = "0.2"
+version = "0.2.1"
 authors = [{ name = "Toni Miquel Llull", email = "tonimiquel.llull@gmail.com" }]
 description = "A package to extract data from intervals.icu to influxDB"
 readme = "README.md"
