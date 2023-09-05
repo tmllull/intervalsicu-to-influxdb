@@ -42,7 +42,7 @@ docker run --env-file PATH/TO/FILE -it --rm tmllull/intervals-to-influxdb app.py
 ```
 
 ### From source
-If you want to run with Docker using the sorce code, you need to follow the next steps:
+If you want to run with Docker using the sorce code, you need to clone the projects and follow the next steps:
 1. Compile the image:
 
 ```bash
