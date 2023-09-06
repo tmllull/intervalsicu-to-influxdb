@@ -1,23 +1,31 @@
-# Intervals.icu to influxDB
-This script exports some data from [intervals.icu](https://intervals.icu) to [influxDB](https://www.influxdata.com/), so you can create your own dashboards, for example with [Grafana](https://grafana.com/). To retreive the information the official [intervals.icu API](https://intervals.icu/api/v1/docs/swagger-ui/index.html) is used.
+# Intervals.icu to InfluxDB
+Intervalsicu-to-influxdb is a personal project to extract data from Intervals.icu to InfluxDB (oh, really?). But if Intervals.icu already shows a lot of graphics, statistics and more, why I need to extract it?
 
-The following screenshots are an example with Grafana:
+## Why
+Well, as a sportsman and techie, it's just a personal project, but the main reason is because I want to create my own dashboards (using Grafana in this case).
+
+So, for example, I can combine activity data with sleep time or quality, compare the evolution between pace/bpm for the similar activities or whatever.
 
 ![Grafana Dashboard example](docs/screenshots/image.png)
 ![Grafana Dashboard example2](docs/screenshots/image2.png)
-## Exported data
-Not all information is exported. This project has been created to extract (for now) only data from activities or wellness (sleep, VO2Max, etc.). Besides, information about data account (like email, location, preferences, etc.), calendar or workouts are not retreived neither (for now).
+
+## How it works
+This project exports some data from [intervals.icu](https://intervals.icu) to [influxDB](https://www.influxdata.com/). To retrieve the information the official [intervals.icu API](https://intervals.icu/api/v1/docs/swagger-ui/index.html) is used.
+
+### Exported data
+Not all information is exported. This project has been created to extract data from activities and wellness. Besides, information about data account (like email, location, preferences, etc.), calendar or workouts are not retrieved neither (for now).
 
 Currently the following data is exported:
-- **Wellness**: this data contains information like sleep time and quality, act/ctl or VO2Max
-- **Activities**: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
-- \***Streams**: streams contains detailed information about activities, like hr/pace for every second.
+- **Wellness**\*: this data contains information like sleep time and quality, atl/ctl or VO2Max
+- **Activities**\*: general information about every activity, like elapsed time, time in zones (hr or pace), distance, average pace/hr, etc.
+- **Streams**\*\*: streams contains detailed information about activities, like hr/pace for every second.
 
-\* Currently working on it.
+\* There are som extra fields generated, just to facilitate the use for the dashboards (see [Entities](Entities.md))
 
+\*\* Currently working on it.
 
 ## How to use
-This script can be used with Docker or directly from code (with Python), but in both cases you need to create a .env file with the following information:
+There are 2 ways (3 if you count 'from source code') to use the project: with Docker or directly with Python (or from source code), but in both cases you need to create a `.env` file to save your credentials for Intervals.icu and InfluxDB as follow:
 
 ```
 INFLUXDB_TOKEN=
@@ -29,107 +37,129 @@ INTERVALS_ATHLETE_ID=
 INTERVALS_API_KEY=
 ```
 
-NOTE: If no bucket exists when run the script, a new one will be created.
-
 ### Docker
-There are 2 ways to use it.
-
-### From Dockerhub
-If you want to use the last image from Dockerhub, just run
+To use with Docker, just run the following command:
 
 ```bash
-docker run --env-file PATH/TO/FILE -it --rm tmllull/intervals-to-influxdb app.py
+docker run --env-file PATH/TO/FILE -it --rm tmllull/intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
 
-### From source
-If you want to run with Docker using the sorce code, you need to clone the projects and follow the next steps:
-1. Compile the image:
+#### Arguments
+All the arguments are optional, but take in consideration the following variations when run it:
 
-```bash
-docker build --tag intervals-to-influxdb .
-```
+- No arguments: retrieve the wellness and activities data for today (this is the basic use to run with a cronjob)
+- Start date: retrieve data from the starting date (in format YYYY-MM-DD) until today
+- End date: retrieve data until specified date (in format YYYY-MM-DD). Use it with `start-date`
+- Streams: retrieve the streams for the activities
+- Reset: delete the current bucket and recreate again
 
-2. Run a new container with the created image:
+NOTE: on the first run, the bucket is created automatically if not exists on InfluxDB
 
-```bash
-docker run --env-file PATH/TO/FILE -it --rm intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
-```
-
-### Examples
-```
-# First run
-docker run -it --rm tmllull/intervals-to-influxdb app.py --start-date 2023-01-01
-
-# Get data from specific date (august)
-docker run -it --rm tmllull/intervals-to-influxdb app.py --start-date 2023-08-01
-
-# Retreive data for today
-docker run -it --rm tmllull/intervals-to-influxdb app.py
-
-# Retreive data for today with streams
-docker run -it --rm tmllull/intervals-to-influxdb app.py --streams
-
-# Reset buket
-docker run -it --rm tmllull/intervals-to-influxdb app.py --start-date 2023-01-01 --reset
-```
-
-If you want to run with a cron job, use the following commad (recommended use without date, to get only the today's data):
-
-```
-docker run --env-file PATH/TO/FILE --rm tmllull/intervals-to-influxdb app.py
-```
-
-### Directly with Python
-If you want to run it with python, there are 2 options:
-
-### Using pip
-To use the pip package, just install the module:
+### With Python
+If you want to run it directly with Python, first install the dependency:
 
 ```bash
 pip install intervalsicu-to-influxdb
 ```
 
-Then, just use the `app.py` file.
+Then, the minimum code to run it is (remember to put the `.env` file on the same folder):
 
-### Using source code
-If you want to run directly from source code, first clone the project, and then:
+```python
+from intervalsicu_to_influxdb.extractor import IntervalsToInflux
 
-1. Install dependencies
+extractor = IntervalsToInflux()
+extractor.all_data()
+```
 
+To run it, just save as `app.py` and run it:
+
+```bash
+python app.py
+```
+
+#### Arguments
+As the Docker way, we can pass arguments when create the extractor. For example:
+
+```python
+extractor = IntervalsToInflux(start_date="2023-01-01")
+```
+```python
+extractor = IntervalsToInflux(streams=True)
+```
+```python
+extractor = IntervalsToInflux(start_date="2023-01-01", end_date="2023-05-01")
+```
+#### Dynamic script
+If you want to create a more dynamic script, here is a more complete example:
+
+```python
+import argparse
+
+from intervalsicu_to_influxdb.extractor import IntervalsToInflux
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--start-date", type=str, help="Start date in format YYYY-MM-DD")
+parser.add_argument("--end-date", type=str, help="End date in format YYYY-MM-DD")
+parser.add_argument(
+    "--streams",
+    action="store_true",
+    help="Export streams for the activities",
+)
+parser.add_argument(
+    "--reset", action="store_true", help="Reset influx bucket (delete and create)"
+)
+
+args = parser.parse_args()
+
+if args.start_date:
+    start_date = args.start_date
+else:
+    start_date = None
+if args.end_date:
+    end_date = args.end_date
+else:
+    end_date = None
+if args.streams:
+    streams = True
+else:
+    streams = False
+if args.reset:
+    reset = True
+else:
+    reset = False
+
+extractor = IntervalsToInflux(start_date, end_date, reset, streams)
+extractor.all_data()
+```
+
+Then, just run the script as before, but you will can use arguments (same as the Docker section):
+
+```bash
+python app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
+```
+
+### From source code
+If you want to run it from source code, just clone the project, and the follow the next steps (remember to create the `.env` file):
+
+#### Run with Docker
+First, compile the image
+```bash
+docker build --tag intervals-to-influxdb .
+```
+And then, just run it like the Docker section above (but with the image name)
+
+```bash
+docker run --env-file PATH/TO/FILE -it --rm intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
+```
+
+Run with Python
+First, install dependencies from source
 ```
 pip install .
 ```
 
-2. Run the script `app.py`
+And then, run the script
 ```
 python app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
-```
-
-Examples:
-```
-# First run
-python app.py --start-date 2023-01-01
-
-# Update data from specific date (august)
-python app.py --start-date 2023-01-01
-
-# Retreive data for today
-python app.py
-
-# Retreive data with streams
-python app.py --streams
-
-# Reset buket
-python app.py --start-date 2023-01-01 --reset
-```
-
-## Options
-The following options are available:
-
-```
--h, --help              show this help message and exit
---start-date START_DATE Start date in format YYYY-MM-DD
---end-date END_DATE     End date in format YYYY-MM-DD
---streams               Export streams for the activities
---reset                 Reset influx bucket (delete and create)
 ```
