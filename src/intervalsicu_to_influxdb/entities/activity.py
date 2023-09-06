@@ -166,7 +166,6 @@ class Activity(dict):
         "icu_hr_zone_times",
         "pace_zone_times",
         "gap_zone_times",
-        "icu_hrr",
     ]
 
     def __init__(self, **kwargs):
