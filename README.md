@@ -155,7 +155,7 @@ And then, just run it like the Docker section above (but with the image name)
 docker run --env-file PATH/TO/FILE -it --rm intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
 
-Run with Python
+#### Run with Python
 First, install dependencies from source
 ```
 pip install .
