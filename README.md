@@ -1,6 +1,8 @@
 # Intervals.icu to InfluxDB
 Intervalsicu-to-influxdb is a personal project to extract data from Intervals.icu to InfluxDB (oh, really?). But if Intervals.icu already shows a lot of graphics, statistics and more, why I need to extract it?
 
+Full documentation can be found in [here](https://intervalsicu-to-influxdb.readthedocs.io)
+
 ## Why
 Well, as a sportsman and techie, it's just a personal project, but the main reason is because I want to create my own dashboards (using Grafana in this case).
 

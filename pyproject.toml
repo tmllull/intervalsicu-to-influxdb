@@ -17,3 +17,4 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://codeberg.org/tmllull/intervalsicu-to-influxdb"
 "Bug Tracker" = "https://codeberg.org/tmllull/intervalsicu-to-influxdb/issues"
+"Documentation" = "https://intervalsicu-to-influxdb.readthedocs.io"
