@@ -13,7 +13,7 @@ REQUIREMENTS = ["influxdb-client", "python-dotenv", "requests"]
 
 setuptools.setup(
     name="intervalsicu_to_influxdb",
-    version="0.2.3",
+    version="0.2.4",
     description="A package to extract data from intervals.icu to influxDB",
     url="https://codeberg.org/tmllull/intervalsicu-to-influxdb",
     author="Toni Miquel Llull",
