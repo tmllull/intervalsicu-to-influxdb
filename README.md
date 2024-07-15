@@ -39,24 +39,6 @@ INTERVALS_ATHLETE_ID=
 INTERVALS_API_KEY=
 ```
 
-### Docker
-To use with Docker, just run the following command:
-
-```bash
-docker run --env-file PATH/TO/FILE -it --rm tmllull/intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
-```
-
-#### Arguments
-All the arguments are optional, but take in consideration the following variations when run it:
-
-- No arguments: retrieve the wellness and activities data for today (this is the basic use to run with a cronjob)
-- Start date: retrieve data from the starting date (in format YYYY-MM-DD) until today
-- End date: retrieve data until specified date (in format YYYY-MM-DD). Use it with `start-date`
-- Streams: retrieve the streams for the activities
-- Reset: delete the current bucket and recreate again
-
-NOTE: on the first run, the bucket is created automatically if not exists on InfluxDB
-
 ### With Python
 If you want to run it directly with Python, first install the dependency:
 
@@ -80,7 +62,15 @@ python app.py
 ```
 
 #### Arguments
-As the Docker way, we can pass arguments when create the extractor. For example:
+All the arguments are optional, but take in consideration the following variations when run it:
+
+- No arguments: retrieve the wellness and activities data for today (this is the basic use to run with a cronjob)
+- Start date: retrieve data from the starting date (in format YYYY-MM-DD) until today
+- End date: retrieve data until specified date (in format YYYY-MM-DD). Use it with `start-date`
+- Streams: retrieve the streams for the activities
+- Reset: delete the current bucket and recreate again
+
+NOTE: on the first run, the bucket is created automatically if not exists on InfluxDB
 
 ```python
 extractor = IntervalsToInflux(start_date="2023-01-01")
@@ -91,6 +81,7 @@ extractor = IntervalsToInflux(streams=True)
 ```python
 extractor = IntervalsToInflux(start_date="2023-01-01", end_date="2023-05-01")
 ```
+
 #### Dynamic script
 If you want to create a more dynamic script, here is a more complete example:
 
