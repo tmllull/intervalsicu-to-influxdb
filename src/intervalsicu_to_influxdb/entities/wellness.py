@@ -38,6 +38,9 @@ class Wellness(dict):
         "abdomen",
         "vo2max",
         "comments",
+        "steps",
+        "respiration",
+        "locked",
     ]
 
     iterable_fields = [
