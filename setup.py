@@ -10,7 +10,7 @@ try:
     else:
         version = os.environ["CI_JOB_ID"]
 except KeyError:
-    version = "0.2.41"
+    version = "0.2.43"
 
 REQUIREMENTS = ["influxdb-client", "python-dotenv", "requests"]
 
