@@ -3,9 +3,9 @@ import os
 
 from dotenv import dotenv_values
 
-from .entities.activity import Activity
 from .clients.influx_client import InfluxClient
 from .clients.intervals_client import Intervals
+from .entities.activity import Activity
 from .entities.wellness import Wellness
 
 try:
@@ -30,7 +30,9 @@ except Exception as e:
 
 
 class IntervalsToInflux(object):
-    def __init__(self, start_date=None, end_date=None, reset=None, streams=False):
+    def __init__(
+        self, date=None, start_date=None, end_date=None, reset=None, streams=False
+    ):
         self._intervals = Intervals(INTERVALS_ATHLETE_ID, INTERVALS_API_KEY)
         self._influx = InfluxClient(
             INFLUXDB_URL,
@@ -40,15 +42,25 @@ class IntervalsToInflux(object):
             INFLUXDB_TIMEOUT,
             reset,
         )
+        if date is not None:
+            self._date = datetime.date.fromisoformat(date)
+        else:
+            self._date = None  # datetime.datetime.now().date()
         if start_date is not None:
             self._start_date = datetime.date.fromisoformat(start_date)
         else:
-            self._start_date = datetime.datetime.now().date()
-        if end_date:
+            self._start_date = None  # datetime.datetime.now().date()
+        if end_date is not None:
             self._end_date = datetime.date.fromisoformat(end_date)
         else:
-            self._end_date = datetime.datetime.now().date()
+            self._end_date = None  # datetime.datetime.now().date()
         self.interval_streams = streams
+
+    def all_data(self):
+        self.wellness()
+        self.activities()
+        if self.interval_streams:
+            self.streams()
 
     def _get_activities_for_streams(self):
         """Get minumun information about activities like id, type and start_date.
@@ -57,7 +69,9 @@ class IntervalsToInflux(object):
         Returns:
             list: list with the id, type and start_date information of the activities
         """
-        activities_list = self._intervals.activities(self._start_date, self._end_date)
+        activities_list = self._intervals.activities(
+            self._date, self._start_date, self._end_date
+        )
         activities_ids = []
         for activity in activities_list:
             activities_ids.append(
@@ -69,14 +83,10 @@ class IntervalsToInflux(object):
             )
         return activities_ids
 
-    def all_data(self):
-        self.wellness()
-        self.activities()
-        if self.interval_streams:
-            self.streams()
-
     def wellness(self):
-        wellness_list = self._intervals.wellness(self._start_date, self._end_date)
+        wellness_list = self._intervals.wellness(
+            self._start_date, self._end_date, self._date
+        )
         data = []
         print("Total wellness data for " + str(len(wellness_list)) + " days...")
         for item in wellness_list:
@@ -100,7 +110,9 @@ class IntervalsToInflux(object):
         self._influx.write_data(data)
 
     def activities(self):
-        activities_list = self._intervals.activities(self._start_date, self._end_date)
+        activities_list = self._intervals.activities(
+            self._start_date, self._end_date, self._date
+        )
         print(
             "Saving activities and zones for "
             + str(len(activities_list))

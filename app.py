@@ -1,10 +1,11 @@
 import argparse
 
-from intervalsicu_to_influxdb.extractor import IntervalsToInflux
+from src.intervalsicu_to_influxdb.extractor import IntervalsToInflux
 
 # Arg parser
 parser = argparse.ArgumentParser()
 
+parser.add_argument("--date", type=str, help="Date in format YYYY-MM-DD")
 parser.add_argument("--start-date", type=str, help="Start date in format YYYY-MM-DD")
 parser.add_argument("--end-date", type=str, help="End date in format YYYY-MM-DD")
 parser.add_argument(
@@ -18,6 +19,10 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+if args.date:
+    date = args.date
+else:
+    date = None
 if args.start_date:
     start_date = args.start_date
 else:
@@ -35,5 +40,5 @@ if args.reset:
 else:
     reset = False
 
-extractor = IntervalsToInflux(start_date, end_date, reset, streams)
+extractor = IntervalsToInflux(date, start_date, end_date, reset, streams)
 extractor.all_data()
