@@ -33,31 +33,41 @@ class Intervals:
 
         return res
 
-    def activities(self, start_date, end_date=None):
-        """
-        Returns all your activities formatted in CSV
-
-        :return: Text data in CSV format
-        :rtype: str
-        """
-        if type(start_date) is not datetime.date:
-            raise TypeError("datetime required")
-
+    def activities(self, start_date, end_date=None, date=None):
+        """ """
         params = {}
-
-        if end_date is not None:
-            if type(end_date) is not datetime.date:
-                raise TypeError("datetime required")
-            end_date = end_date + datetime.timedelta(days=1)
+        if start_date is None and end_date is None and date is None:
+            print("Getting activities for today...")
+            start_date = datetime.datetime.now().date()
+            end_date = datetime.datetime.now().date() + datetime.timedelta(days=1)
             params["oldest"] = start_date.isoformat()
             params["newest"] = end_date.isoformat()
-            url = "{}/api/v1/athlete/{}/activities".format(
-                Intervals.BASE_URL, self.athlete_id
-            )
         else:
-            url = "{}/api/v1/athlete/{}/activities/{}".format(
-                Intervals.BASE_URL, self.athlete_id, start_date.isoformat()
-            )
+            if date is not None:
+                print("Getting activities for " + str(date) + "...")
+                start_date: datetime.date = date
+                end_date: datetime.date = date + datetime.timedelta(days=1)
+                params["oldest"] = start_date.isoformat()
+                params["newest"] = end_date.isoformat()
+            else:
+                print("Getting activities for range dates...")
+                if type(start_date) is not datetime.date:
+                    raise TypeError("datetime required")
+                if end_date is not None:
+                    if type(end_date) is not datetime.date:
+                        raise TypeError("datetime required")
+                    params["oldest"] = start_date.isoformat()
+                    params["newest"] = end_date.isoformat()
+                else:
+                    end_date = datetime.datetime.now().date() + datetime.timedelta(
+                        days=1
+                    )
+                    params["oldest"] = start_date.isoformat()
+                    params["newest"] = end_date.isoformat()
+        url = "{}/api/v1/athlete/{}/activities".format(
+            Intervals.BASE_URL, self.athlete_id
+        )
+
         res = self._make_request("get", url, params)
         j = res.json()
         if type(j) is list:
@@ -171,35 +181,50 @@ class Intervals:
             respiration,
         )
 
-    def wellness(self, start_date, end_date=None):
+    def wellness(self, start_date, end_date, date):
         """ """
-        if type(start_date) is not datetime.date:
-            raise TypeError("datetime required")
-
         params = {}
-
-        if end_date is not None:
-            if type(end_date) is not datetime.date:
-                raise TypeError("datetime required")
-
-            params["oldest"] = start_date.isoformat()
-            params["newest"] = end_date.isoformat()
-            url = "{}/api/v1/athlete/{}/wellness".format(
-                Intervals.BASE_URL, self.athlete_id
+        if start_date is None and end_date is None and date is None:
+            print("Getting wellness for today...")
+            date = datetime.datetime.now().date()
+            url = "{}/api/v1/athlete/{}/wellness/{}".format(
+                Intervals.BASE_URL, self.athlete_id, date.isoformat()
             )
         else:
-            url = "{}/api/v1/athlete/{}/wellness/{}".format(
-                Intervals.BASE_URL, self.athlete_id, start_date.isoformat()
-            )
+            if date is not None:
+                print("Getting wellness for " + str(date) + "...")
+                if type(date) is not datetime.date:
+                    raise TypeError("datetime required")
+                url = "{}/api/v1/athlete/{}/wellness/{}".format(
+                    Intervals.BASE_URL, self.athlete_id, date.isoformat()
+                )
+            else:
+                print("Getting wellness for range dates...")
+                if type(start_date) is not datetime.date:
+                    raise TypeError("datetime required")
+                if end_date is not None:
+                    if type(end_date) is not datetime.date:
+                        raise TypeError("datetime required")
+                    params["oldest"] = start_date.isoformat()
+                    params["newest"] = end_date.isoformat()
+                else:
+                    end_date = datetime.datetime.now().date()
+                    params["oldest"] = start_date.isoformat()
+                    params["newest"] = end_date.isoformat()
+                url = "{}/api/v1/athlete/{}/wellness".format(
+                    Intervals.BASE_URL, self.athlete_id
+                )
 
         res = self._make_request("get", url, params)
         j = res.json()
+        result = []
         if type(j) is list:
-            result = []
             for item in j:
                 result.append(item)
             return result
-        return j
+        result = []
+        result.append(j)
+        return result
 
     def workouts(self):
         """ """
