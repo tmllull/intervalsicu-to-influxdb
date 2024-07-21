@@ -65,10 +65,11 @@ python app.py
 All the arguments are optional, but take in consideration the following variations when run it:
 
 - No arguments: retrieve the wellness and activities data for today (this is the basic use to run with a cronjob)
-- Start date: retrieve data from the starting date (in format YYYY-MM-DD) until today
-- End date: retrieve data until specified date (in format YYYY-MM-DD). Use it with `start-date`
-- Streams: retrieve the streams for the activities
-- Reset: delete the current bucket and recreate again
+- date: retrieve data for the defined date (in format YYYY-MM-DD)
+- start-date: retrieve data from the starting date (in format YYYY-MM-DD) until today
+- end-date: retrieve data until specified date (in format YYYY-MM-DD). Use it with `start-date`
+- streams: retrieve the streams for the activities
+- reset: delete the current bucket and recreate again
 
 NOTE: on the first run, the bucket is created automatically if not exists on InfluxDB
 
@@ -92,6 +93,7 @@ from intervalsicu_to_influxdb.extractor import IntervalsToInflux
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument("--date", type=str, help="Date in format YYYY-MM-DD")
 parser.add_argument("--start-date", type=str, help="Start date in format YYYY-MM-DD")
 parser.add_argument("--end-date", type=str, help="End date in format YYYY-MM-DD")
 parser.add_argument(
@@ -105,6 +107,10 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+if args.date:
+    date = args.date
+else:
+    date = None
 if args.start_date:
     start_date = args.start_date
 else:
@@ -122,14 +128,14 @@ if args.reset:
 else:
     reset = False
 
-extractor = IntervalsToInflux(start_date, end_date, reset, streams)
+extractor = IntervalsToInflux(date, start_date, end_date, reset, streams)
 extractor.all_data()
 ```
 
 Then, just run the script as before, but you will can use arguments (same as the Docker section):
 
 ```bash
-python app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
+python app.py [-h] [--date DATE] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
 
 ### From source code
@@ -143,7 +149,7 @@ docker build --tag intervals-to-influxdb .
 And then, just run it like the Docker section above (but with the image name)
 
 ```bash
-docker run --env-file PATH/TO/FILE -it --rm intervals-to-influxdb app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
+docker run --env-file PATH/TO/FILE -it --rm intervals-to-influxdb app.py [-h] [--date DATE] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
 
 #### Run with Python
@@ -154,5 +160,5 @@ pip install .
 
 And then, run the script
 ```
-python app.py [-h] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
+python app.py [-h] [--date DATE] [--start-date START_DATE] [--end-date END_DATE] [--streams] [--reset]
 ```
