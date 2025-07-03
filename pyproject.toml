@@ -33,13 +33,9 @@ Repository = "https://github.com/tmllull/intervalsicu-to-influxdb"
 Issues = "https://github.com/tmllull/intervalsicu-to-influxdb/issues"
 Documentation = "https://intervalsicu-to-influxdb.readthedocs.io"
 
-[project.scripts]
-auto-commit-ai = "auto_commit_ai.cli:main"
-acai = "auto_commit_ai.cli:main"
-
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
-version = { attr = "auto_commit_ai._version.__version__" }
+# version = { attr = "auto_commit_ai._version.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["."]
