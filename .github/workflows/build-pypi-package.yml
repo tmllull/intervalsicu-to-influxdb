@@ -25,11 +25,9 @@ jobs:
 
       - name: Set version
         run: |
-          # Usa el tag de la release como versión
+          # Use the release tag as the version
           VERSION="${{ github.event.release.tag_name }}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "__version__ = \"$VERSION\"" > auto_commit_ai/_version.py
-          echo "Updated auto_commit_ai/_version.py with version: $VERSION"
 
       - name: Build package
         run: python -m build
