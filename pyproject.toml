@@ -35,7 +35,7 @@ Documentation = "https://intervalsicu-to-influxdb.readthedocs.io"
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
-# version = { attr = "auto_commit_ai._version.__version__" }
+# version = { attr = "_version.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["."]
